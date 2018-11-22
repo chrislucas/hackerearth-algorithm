@@ -1,0 +1,4 @@
+https://www.geeksforgeeks.org/the-knights-tour-problem-backtracking-1/
+
+Outra abordagem para o problema do passeio do cavalo num tabuleiro
+https://www.geeksforgeeks.org/warnsdorffs-algorithm-knights-tour-problem/
