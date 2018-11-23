@@ -56,8 +56,6 @@ fun sol1(table: Array<Array<Boolean>>, c: Int) : Boolean {
  * */
 fun sol2(table: Array<Int>, c: Int) {
     val lim = table.size
-    if (c == lim)
-        return
     for (l in 0 until lim) {
         /**
          * Verificar se eh possivel posicionar a rainha
@@ -67,6 +65,8 @@ fun sol2(table: Array<Int>, c: Int) {
         for (ci in 0 until  c) {
             // linha que a rainha esta na coluna ci
             val li = table[ci]
+            // verificar se a linha|coluna que queremos colocar a rainha
+            // nao esta sobe ataque ou na mesma linha ou na diagonal
             if (li == l || (abs(ci - c)) == abs(li - l)) {
                 flag = false
                 break
@@ -74,7 +74,12 @@ fun sol2(table: Array<Int>, c: Int) {
         }
         if (flag) {
             table[c] = l
-            sol2(table, c+1)
+            if (c == table.size - 1) {
+                showBoard(table)
+            }
+            else {
+                sol2(table, c+1)
+            }
         }
     }
     return
@@ -84,32 +89,58 @@ fun sol2(table: Array<Int>, c: Int) {
  * Posicionando as rainhas linha a linha
  * */
 fun sol3(table: Array<Int>, l: Int) {
-    val lim = table.size
-    if (l == lim)
-        return
-    for (c in 0 until lim) {
+    for (c in 0 until table.size) {
         var flag = true
         // tentar po
         for (li in 0 until l) {
             // recuperar em qual coluna a rainha da li linha esta
             val ci = table[li]
             // se estuver ba nesna coluna ou na diagonal
-            if (c == ci || (abs(li - l)) == abs(c - ci)) {
+            if (c == ci || abs(li - l) == abs(c - ci)) {
                 flag = false
                 break
             }
         }
         if (flag) {
             table[l] = c
-            sol3(table, l+1)
+            when (l) {
+                table.size - 1 -> showBoard(table)
+                else -> {
+                    sol3(table, l+1)
+                }
+            }
         }
     }
+}
+
+fun exists(table: Array<Int>, l: Int): Boolean {
+    if (l == table.size)
+        return true
+    for (c in 0 until table.size) {
+        var flag = true
+        // tentar po
+        for (li in 0 until l) {
+            // recuperar em qual coluna a rainha da li linha esta
+            val ci = table[li]
+            // se estuver ba nesna coluna ou na diagonal
+            if (c == ci || abs(li - l) == abs(c - ci)) {
+                flag = false
+                break
+            }
+        }
+        if (flag) {
+            table[l] = c
+            if (exists(table, l+1))
+                return true
+        }
+    }
+    return false
 }
 
 
 fun testsol1() {
     val size = 8
-    val table = Array(size) { it -> Array(8) {false}}
+    val table = Array(size) { Array(8) {false}}
     println(sol1(table, 0))
     for (i in 0 until size) {
         for (j in 0 until size) {
@@ -123,32 +154,38 @@ fun testsol2() {
     val size  = 4
     val table = Array(size) {0}
     sol2(table, 0)
-    table.forEachIndexed { i, value -> print(String.format(if (i==0) "lc(%d %d)" else " lc(%d %d)", value, i) ) }
-    println()
-    for ( i in 0 until size) {
-        for (j in 0 until size) {
+}
+
+fun showBoard(table: Array<Int>) {
+    for ( i in 0 until table.size) {
+        for (j in 0 until table.size) {
             print(String.format(if(j==0) "%c" else " %c", if (i == table[j]) 'q' else '-'))
         }
         println("")
     }
+    println("")
 }
 
 fun testsol3() {
-    val size  = 4
+    val size  = 8
     val table = Array(size) {0}
     sol3(table, 0)
-    table.forEachIndexed { i, value -> print(String.format(if (i==0) "lc(%d %d)" else " lc(%d %d)", value, i) ) }
     println()
-    for ( i in 0 until size) {
-        for (j in 0 until size) {
-            print(String.format(if(j==0) "%c" else " %c", if (i == table[j]) 'q' else '-'))
-        }
-        println("")
-    }
+}
+
+fun testExists() {
+    val size  = 8
+    val table = Array(size) {0}
+    val exists = exists(table, 0)
+    println(String.format("%dx%d: %s", size, size, exists))
+    if (exists)
+        showBoard(table)
 }
 
 fun main(args: Array<String>) {
     //testsol1()
     //testsol2()
-    testsol3()
+    //testsol3()
+    testExists()
+
 }
